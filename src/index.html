@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>jQuery</title>
+    <link href="styles/styles.css" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+</head>
+<body class="body_no-margins">
+<div id="radio" class="radio"></div>
+<div class="main">
+    <button id="btn_1">Get Users</button>
+</div>
+<div class="modal" id="modal_1">
+    <div class="modal__content">
+        <span class="close">&times;</span>
+        <p>Edit Profile:</p>
+        <label for="field_login" class="info-label">Login:</label>
+        <input type="text" id="field_login" name="info" class="info-input">
+        <label for="field_login" id="label_login" class="info-label_error"></label><p></p>
+        <label for="field_id" class="info-label">Id:</label>
+        <input type="text" id="field_id" name="info" class="info-input">
+        <label for="field_id" id="label_id" class="info-label_error"></label><p></p>
+        <label for="field_contributions" class="info-label">Contributions:</label>
+        <input type="text" id="field_contributions" name="info" class="info-input">
+        <label for="field_id" id="label_contributions" class="info-label_error"></label><p></p>
+        <label for="field_company" class="info-label">Company:</label>
+        <input type="text" id="field_company" name="info" class="info-input"><p></p>
+        <label for="field_location" class="info-label">Location:</label>
+        <input type="text" id="field_location" name="info" class="info-input"><p></p>
+        <label for="field_email" class="info-label">Email:</label>
+        <input type="text" id="field_email" name="info" class="info-input">
+        <label for="field_id" id="label_email" class="info-label_error"></label><p></p>
+        <button id="button_save" class="save">Save</button>
+        <button id="button_cancel" class="cancel">Cancel</button>
+    </div>
+</div>
+<script src="js/index.js"></script>
+</body>
+</html>
