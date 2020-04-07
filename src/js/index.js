@@ -45,15 +45,14 @@ for (let i = 0; i < 30; i++) {
 
 function getIndividualUsers() {
   for (let i = 0; i < 30; i++) {
-    $.getJSON(urls[i], function (data) {
+    jqxhr = $.getJSON(urls[i], function (data) {
       userData[i][0] = data.company;
       userData[i][1] = data.location;
       userData[i][2] = data.email;
-
       count++;
-      if (count === 1) showIndividualUsers();
+      if (count === 30) showIndividualUsers();
     }).fail(function () {
-      console.log("Something went wrong with" + urls[i]);
+      console.log(jqxhr.responseText);
     });
   }
 }
@@ -82,13 +81,14 @@ $('#btn_1').click(function () {
 
 let table_cell;
 let usersUrl = 'https://api.github.com/repos/thomasdavis/backbonetutorials/contributors';
+let jqxhr;
 
-function getData(data) {
+function getData() {
   let table;
   let table_row;
   let table_header;
   let button_edit_profile;
-  let jqxhr = $.getJSON(usersUrl, function (data) {
+  jqxhr = $.getJSON(usersUrl, function (data) {
     table = $('<table id="tbl_1" class="table"></table>');
     table.appendTo('.main');
     $('<thead id="th_1"></thead>').appendTo('.table');
@@ -141,7 +141,7 @@ function getData(data) {
     });
   }).then(getIndividualUsers)
     .fail(function () {
-      console.log('Something went wrong with all users');
+      console.log(jqxhr.responseText);
     });
 }
 
