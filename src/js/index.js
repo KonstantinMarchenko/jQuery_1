@@ -15,62 +15,23 @@ $('#radio').hide();
 
 $('input[name="settings"]').on('change', function () {
   if ($(this).val() === '1') {
-    $('.table__row_bronze').show();
-    $('.table__row_silver').show();
-    $('.table__row_gold').show();
+    $(tableRowSelectors[0]).show();
+    $(tableRowSelectors[1]).show();
+    $(tableRowSelectors[2]).show();
   } else if ($(this).val() === '2') {
-    $('.table__row_bronze').show();
-    $('.table__row_silver').hide();
-    $('.table__row_gold').hide();
+    $(tableRowSelectors[0]).show();
+    $(tableRowSelectors[1]).hide();
+    $(tableRowSelectors[2]).hide();
   } else if ($(this).val() === '3') {
-    $('.table__row_bronze').hide();
-    $('.table__row_silver').show();
-    $('.table__row_gold').hide();
+    $(tableRowSelectors[0]).hide();
+    $(tableRowSelectors[1]).show();
+    $(tableRowSelectors[2]).hide();
   } else if ($(this).val() === '4') {
-    $('.table__row_bronze').hide();
-    $('.table__row_silver').hide();
-    $('.table__row_gold').show();
+    $(tableRowSelectors[0]).hide();
+    $(tableRowSelectors[1]).hide();
+    $(tableRowSelectors[2]).show();
   }
 });
-
-let count = 0;
-let urls = [];
-let userData = [];
-
-for (let i = 0; i < 30; i++) {
-  if (!userData[i]) {
-    userData[i] = [];
-  }
-}
-
-function getIndividualUsers() {
-  for (let i = 0; i < 30; i++) {
-    jqxhr = fetch(urls[i])
-      .then(response => {
-        return response.json();
-      }).then(data => {
-        userData[i][0] = data.company;
-        userData[i][1] = data.location;
-        userData[i][2] = data.email;
-        count++;
-        if (count === 30) showIndividualUsers();
-      }).catch(error => {
-        console.log(error);
-      });
-  }
-}
-
-function showIndividualUsers() {
-  for (let i = 0; i < 30; i++) {
-    table_cell = ('<td id="td_company_' + i + '" class="table__cell">' + userData[i][0] + '</td>');
-    $(table_cell).appendTo("#tr_" + i);
-    table_cell = ('<td id="td_location_' + i + '" class="table__cell">' + userData[i][1] + '</td>');
-    $(table_cell).appendTo("#tr_" + i);
-    table_cell = ('<td id="td_email_' + i + '" class="table__cell">' + userData[i][2] + '</td>');
-    $(table_cell).appendTo("#tr_" + i);
-  }
-  sortTable();
-}
 
 $('#btn_1').click(function () {
   $('#btn_1').hide();
@@ -78,80 +39,87 @@ $('#btn_1').click(function () {
   var p1 = new Promise((resolve, reject) => {
     resolve();
   });
-
   p1.then(getData);
 });
 
-let table_cell;
+let count = 0;
+let urls = [];
+let userData = [];
+let row_id = [];
+let tableRowSelectors = ['.table__row_bronze', '.table__row_silver', '.table__row_gold'];
 let usersUrl = 'https://api.github.com/repos/thomasdavis/backbonetutorials/contributors';
-let jqxhr;
+let userFields = ['login', 'id', 'contributions', 'group', 'company', 'location', 'email'];
+let userFieldsModal = ['login', 'id', 'contributions', 'company', 'location', 'email'];
+let selector;
+let isNum;
 
 function getData() {
-  let table;
-  let table_row;
-  let table_header;
-  let button_edit_profile;
-  jqxhr = fetch(usersUrl)
+  fetch(usersUrl)
     .then(response => {
       return response.json();
     }).then(data => {
-      table = $('<table id="tbl_1" class="table"></table>');
-      table.appendTo('.main');
-      $('<thead id="th_1"></thead>').appendTo('.table');
-      table_row = ('<tr id="tr_header"></tr>');
-      $(table_row).appendTo('#th_1');
-      table_header = $('<th></th>');
-      table_header.appendTo('#tr_header');
-      table_header = $('<th class="table__header" id="th_1">Login</th>');
-      table_header.appendTo('#tr_header');
-      table_header = $('<th class="table__header" id="th_2">Id</th>');
-      table_header.appendTo('#tr_header');
-      table_header = $('<th class="table__header" id="th_3">Contributions</th>');
-      table_header.appendTo('#tr_header');
-      table_header = $('<th class="table__header" id="th_4">Group</th>');
-      table_header.appendTo('#tr_header');
-      table_header = $('<th class="table__header" id="th_5">Company</th>');
-      table_header.appendTo('#tr_header');
-      table_header = $('<th class="table__header" id="th_6">Location</th>');
-      table_header.appendTo('#tr_header');
-      table_header = $('<th class="table__header" id="th_7">Email</th>');
-      table_header.appendTo('#tr_header');
-      $('<tbody id="tb_1"></tbody>').appendTo('.table');
+    $.each(data, function (index) {
+      if (!userData[index]) userData[index] = [];
+      userData[index][0] = data[index].login;
+      userData[index][1] = data[index].id;
+      userData[index][2] = data[index].contributions;
+      if (userData[index][2] <= 10) {
+        userData[index][3] = 'Bronze';
+      } else if (userData[index][2] <= 100) {
+        userData[index][3] = 'Silver';
+      } else userData[index][3] = 'Gold';
 
-      $.each(data, function (index) {
-        table_row = ('<tr id="tr_' + index + '" class="table__row"></tr>');
-        $(table_row).appendTo('#tb_1');
-        button_edit_profile = ('<button class="button-edit-profile">Edit Profile</button>');
-        $(button_edit_profile).appendTo('#tr_' + index);
-        table_cell = ('<td id="td_login_' + index + '" class="table__cell">' + data[index].login + '</td>');
-        $(table_cell).appendTo('#tr_' + index);
-        table_cell = ('<td id="td_id_' + index + '" class="table__cell">' + data[index].id + '</td>');
-        $(table_cell).appendTo('#tr_' + index);
-        table_cell = ('<td id="td_contributions_' + index + '" class="table__cell">' + data[index].contributions + '</td>');
-        $(table_cell).appendTo('#tr_' + index);
-        if (data[index].contributions <= 10) {
-          table_cell = ('<td id="td_group_' + index + '" class="table__cell">Bronze</td>');
-          $(table_cell).appendTo('#tr_' + index);
-          $('#tr_' + index).addClass('table__row_bronze');
-        } else if (data[index].contributions <= 100) {
-          table_cell = ('<td id="td_group_' + index + '" class="table__cell">Silver</td>');
-          $(table_cell).appendTo('#tr_' + index);
-          $('#tr_' + index).addClass('table__row_silver');
-        } else {
-          table_cell = ('<td id="td_group_' + index + '" class="table__cell">Gold</td>');
-          $(table_cell).appendTo('#tr_' + index);
-          $('#tr_' + index).addClass('table__row_gold');
-        }
-
-        urls.push(data[index].url);
-      });
-    }).then(getIndividualUsers)
+      urls.push(data[index].url);
+    });
+  }).then(getIndividualData)
     .catch(error => {
       console.log(error);
     });
 }
 
-let row_id = [];
+function getIndividualData() {
+  for (let i = 0; i < 30; i++) {
+    fetch(urls[i])
+      .then(response => {
+        return response.json();
+      }).then(data => {
+      userData[i][4] = data.company;
+      userData[i][5] = data.location;
+      userData[i][6] = data.email;
+      count++;
+      if (count === 30) fillTable();
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+}
+
+function fillTable() {
+  $('<table id="tbl_1" class="table"></table>').appendTo('.main');
+  $('<thead id="th_1"></thead>').appendTo('.table');
+  $('<tr id="tr_headers"></tr>').appendTo('#th_1');
+  $('<th></th>').appendTo('#tr_headers');
+  for (let i = 0; i < 7; i++) {
+    $('<th class="table__header" id="th_' + i + '">' + userFields[i] + '</th>').appendTo('#tr_headers');
+  }
+  $('<tbody id="tb_1"></tbody>').appendTo('.table');
+  for (let i = 0; i < userData.length; i++) {
+    $('<tr id="tr_' + i + '" class="table__row"></tr>').appendTo('#tb_1');
+    $('<button class="button-edit-profile">Edit Profile</button>').appendTo('#tr_' + i);
+    for (let j = 0; j < 7; j++) {
+      if (j === 3) {
+        if (userData[i][j] === 'Bronze') {
+          $('#tr_' + i).addClass('table__row_bronze')
+        } else if (userData[i][j] === 'Silver') {
+          $('#tr_' + i).addClass('table__row_silver')
+        } else $('#tr_' + i).addClass('table__row_gold')
+      }
+      $('<td id="td_' + userFields[j] + '_' + i + '" class="table__cell">' + userData[i][j] + '</td>').appendTo('#tr_' + i);
+    }
+  }
+
+  sortTable();
+}
 
 $('.main').on('click', '.button-edit-profile', function () {
   row_id = $(this).closest('tr').attr('id').split('_');
@@ -161,97 +129,48 @@ $('.main').on('click', '.button-edit-profile', function () {
 
 $('.modal__content').on('click', '.close, .cancel', function () {
   $('.modal').css('display', 'none');
-  $('#label_login').text('');
-  $('#label_id').text('');
-  $('#label_contributions').text('');
-  $('#label_email').text('');
-});
-
-$('.modal__content').on('click', '.save', function () {
+  $('#label_login, #label_id, #label_contributions, #label_email').text('');
+}).on('click', '.save', function () {
   submitInfo(row_id[1]);
 });
 
 let modal = document.getElementById("modal_1");
 
 window.onclick = function (event) {
-  if (event.target == modal) {
+  if (event.target === modal) {
     $('.modal').hide();
-    $('#label_login').text('');
-    $('#label_id').text('');
-    $('#label_contributions').text('');
-    $('#label_email').text('');
+    $('#label_login, #label_id, #label_contributions, #label_email').text('');
   }
 };
 
 function fillModalWindow(id) {
-  if (($('#td_login_' + id).text()) === 'null' || ($('#td_login_' + id).text()) === 'undefined') {
-    $('#field_login').val('');
-  } else {
-    $('#field_login').val($('#td_login_' + id).text());
-  }
-
-  if (($('#td_id_' + id).text()) === 'null' || ($('#td_id_' + id).text()) === 'undefined') {
-    $('#field_id').val('');
-  } else {
-    $('#field_id').val($('#td_id_' + id).text());
-  }
-
-  if (($('#td_contributions_' + id).text()) === 'null' || ($('#td_contributions_' + id).text()) === 'undefined') {
-    $('#field_contributions').val('');
-  } else {
-    $('#field_contributions').val($('#td_contributions_' + id).text());
-  }
-
-  if (($('#td_company_' + id).text()) === 'null' || ($('#td_company_' + id).text()) === 'undefined') {
-    $('#field_company').val('');
-  } else {
-    $('#field_company').val($('#td_company_' + id).text());
-  }
-
-  if (($('#td_location_' + id).text()) === 'null' || ($('#td_location_' + id).text()) === 'undefined') {
-    $('#field_location').val('');
-  } else {
-    $('#field_location').val($('#td_location_' + id).text());
-  }
-
-  if (($('#td_email_' + id).text()) === 'null' || ($('#td_email_' + id).text()) === 'undefined') {
-    $('#field_email').val('');
-  } else {
-    $('#field_email').val($('#td_email_' + id).text());
+  for (let i = 0; i < userFieldsModal.length; i++) {
+    selector = `#td_${userFieldsModal[i]}_${id}`;
+    if ($(selector).text() === 'null' || $(selector).text() === 'undefined') {
+      $(`#field_${userFieldsModal[i]}`).val('');
+    } else $(`#field_${userFieldsModal[i]}`).val($(selector).text());
   }
 }
 
 function submitInfo(id) {
   let shouldSubmit = true;
-  let isNum;
 
-  if ($('#field_login').val().length === 0) {
-    $('#label_login').text('Please specify login');
-    shouldSubmit = false;
-  }
-
-  if ($('#field_id').val().length !== 0) {
-    let isNum = /^\d+$/.test($('#field_id').val());
-    if (!(isNum)) {
-      $('#label_id').text('Id field should only contain numbers');
+  for (let i = 0; i < 3; i++) {
+    if ($(`#field_${userFieldsModal[i]}`).val().length === 0) {
+      $(`#label_${userFieldsModal[i]}`).text('Please specify ' + userFieldsModal[i]);
       shouldSubmit = false;
     }
-  } else {
-    $('#label_id').text('Please specify id');
-    shouldSubmit = false;
   }
 
-  if ($('#field_contributions').val().length !== 0) {
-    isNum = /^\d+$/.test($('#field_contributions').val());
-    if (!(isNum)) {
-      $('#label_contributions').text('Contributions field should only contain numbers');
-      shouldSubmit = false;
+  for (let i = 1; i < 3; i++) {
+    if ($(`#field_${userFieldsModal[i]}`).val().length !== 0) {
+      isNum = /^\d+$/.test($(`#field_${userFieldsModal[i]}`).val());
+      if (!(isNum)) {
+        $(`#label_${userFieldsModal[i]}`).text(userFieldsModal[i] + ' field should only contain numbers');
+        shouldSubmit = false;
+      }
     }
-  } else {
-    $('#label_contributions').text('Please specify contributions');
-    shouldSubmit = false;
   }
-
 
   if ($('#field_email').val().length !== 0) {
     let containsAtSign = $('#field_email').val().includes('@');
@@ -262,17 +181,16 @@ function submitInfo(id) {
   }
 
   if (shouldSubmit) {
-    $('#td_login_' + id).text($('#field_login').val());
-    $('#td_id_' + id).text($('#field_id').val());
-    $('#td_contributions_' + id).text($('#field_contributions').val());
-    $('#td_email_' + id).text($('#field_email').val());
-    $('#td_company_' + id).text($('#field_company').val());
-    $('#td_location_' + id).text($('#field_location').val());
+    for (let i = 0; i < userFieldsModal.length; i++) {
+      $(`#td_${userFieldsModal[i]}_` + id).text($(`#field_${userFieldsModal[i]}`).val());
+    }
 
-    if ($('#field_contributions').val() <= 10) {
+    selector = '#field_contributions';
+
+    if ($(selector).val() <= 10) {
       $('#td_group_' + id).text('Bronze');
       $('#tr_' + id).removeClass('table__row_silver table__row_gold').addClass('table__row_bronze');
-    } else if ($('#field_contributions').val() <= 100) {
+    } else if ($(selector).val() <= 100) {
       $('#td_group_' + id).text('Silver');
       $('#tr_' + id).removeClass('table__row_bronze table__row_gold').addClass('table__row_silver');
     } else {
@@ -281,10 +199,7 @@ function submitInfo(id) {
     }
 
     $('.modal').css('display', 'none');
-    $('#label_login').text('');
-    $('#label_id').text('');
-    $('#label_contributions').text('');
-    $('#label_email').text('');
+    $('#label_login, #label_id, #label_contributions, #label_email').text('');
   }
 }
 

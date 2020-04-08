@@ -26,9 +26,6 @@
 .table__row {
   color: black;
 }
-.table__row_bronze {
-  color: saddlebrown;
-}
 .table__row_silver {
   color: silver;
 }
@@ -90,3 +87,5 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+/*# sourceMappingURL=styles.css.map */
