@@ -45,15 +45,18 @@ for (let i = 0; i < 30; i++) {
 
 function getIndividualUsers() {
   for (let i = 0; i < 30; i++) {
-    jqxhr = $.getJSON(urls[i], function (data) {
-      userData[i][0] = data.company;
-      userData[i][1] = data.location;
-      userData[i][2] = data.email;
-      count++;
-      if (count === 30) showIndividualUsers();
-    }).fail(function () {
-      console.log(jqxhr.responseText);
-    });
+    jqxhr = fetch(urls[i])
+      .then(response => {
+        return response.json();
+      }).then(data => {
+        userData[i][0] = data.company;
+        userData[i][1] = data.location;
+        userData[i][2] = data.email;
+        count++;
+        if (count === 30) showIndividualUsers();
+      }).catch(error => {
+        console.log(error);
+      });
   }
 }
 
@@ -88,60 +91,63 @@ function getData() {
   let table_row;
   let table_header;
   let button_edit_profile;
-  jqxhr = $.getJSON(usersUrl, function (data) {
-    table = $('<table id="tbl_1" class="table"></table>');
-    table.appendTo('.main');
-    $('<thead id="th_1"></thead>').appendTo('.table');
-    table_row = ('<tr id="tr_header"></tr>');
-    $(table_row).appendTo('#th_1');
-    table_header = $('<th></th>');
-    table_header.appendTo('#tr_header');
-    table_header = $('<th class="table__header" id="th_1">Login</th>');
-    table_header.appendTo('#tr_header');
-    table_header = $('<th class="table__header" id="th_2">Id</th>');
-    table_header.appendTo('#tr_header');
-    table_header = $('<th class="table__header" id="th_3">Contributions</th>');
-    table_header.appendTo('#tr_header');
-    table_header = $('<th class="table__header" id="th_4">Group</th>');
-    table_header.appendTo('#tr_header');
-    table_header = $('<th class="table__header" id="th_5">Company</th>');
-    table_header.appendTo('#tr_header');
-    table_header = $('<th class="table__header" id="th_6">Location</th>');
-    table_header.appendTo('#tr_header');
-    table_header = $('<th class="table__header" id="th_7">Email</th>');
-    table_header.appendTo('#tr_header');
-    $('<tbody id="tb_1"></tbody>').appendTo('.table');
+  jqxhr = fetch(usersUrl)
+    .then(response => {
+      return response.json();
+    }).then(data => {
+      table = $('<table id="tbl_1" class="table"></table>');
+      table.appendTo('.main');
+      $('<thead id="th_1"></thead>').appendTo('.table');
+      table_row = ('<tr id="tr_header"></tr>');
+      $(table_row).appendTo('#th_1');
+      table_header = $('<th></th>');
+      table_header.appendTo('#tr_header');
+      table_header = $('<th class="table__header" id="th_1">Login</th>');
+      table_header.appendTo('#tr_header');
+      table_header = $('<th class="table__header" id="th_2">Id</th>');
+      table_header.appendTo('#tr_header');
+      table_header = $('<th class="table__header" id="th_3">Contributions</th>');
+      table_header.appendTo('#tr_header');
+      table_header = $('<th class="table__header" id="th_4">Group</th>');
+      table_header.appendTo('#tr_header');
+      table_header = $('<th class="table__header" id="th_5">Company</th>');
+      table_header.appendTo('#tr_header');
+      table_header = $('<th class="table__header" id="th_6">Location</th>');
+      table_header.appendTo('#tr_header');
+      table_header = $('<th class="table__header" id="th_7">Email</th>');
+      table_header.appendTo('#tr_header');
+      $('<tbody id="tb_1"></tbody>').appendTo('.table');
 
-    $.each(data, function (index) {
-      table_row = ('<tr id="tr_' + index + '" class="table__row"></tr>');
-      $(table_row).appendTo('#tb_1');
-      button_edit_profile = ('<button class="button-edit-profile">Edit Profile</button>');
-      $(button_edit_profile).appendTo('#tr_' + index);
-      table_cell = ('<td id="td_login_' + index + '" class="table__cell">' + data[index].login + '</td>');
-      $(table_cell).appendTo('#tr_' + index);
-      table_cell = ('<td id="td_id_' + index + '" class="table__cell">' + data[index].id + '</td>');
-      $(table_cell).appendTo('#tr_' + index);
-      table_cell = ('<td id="td_contributions_' + index + '" class="table__cell">' + data[index].contributions + '</td>');
-      $(table_cell).appendTo('#tr_' + index);
-      if (data[index].contributions <= 10) {
-        table_cell = ('<td id="td_group_' + index + '" class="table__cell">Bronze</td>');
+      $.each(data, function (index) {
+        table_row = ('<tr id="tr_' + index + '" class="table__row"></tr>');
+        $(table_row).appendTo('#tb_1');
+        button_edit_profile = ('<button class="button-edit-profile">Edit Profile</button>');
+        $(button_edit_profile).appendTo('#tr_' + index);
+        table_cell = ('<td id="td_login_' + index + '" class="table__cell">' + data[index].login + '</td>');
         $(table_cell).appendTo('#tr_' + index);
-        $('#tr_' + index).addClass('table__row_bronze');
-      } else if (data[index].contributions <= 100) {
-        table_cell = ('<td id="td_group_' + index + '" class="table__cell">Silver</td>');
+        table_cell = ('<td id="td_id_' + index + '" class="table__cell">' + data[index].id + '</td>');
         $(table_cell).appendTo('#tr_' + index);
-        $('#tr_' + index).addClass('table__row_silver');
-      } else {
-        table_cell = ('<td id="td_group_' + index + '" class="table__cell">Gold</td>');
+        table_cell = ('<td id="td_contributions_' + index + '" class="table__cell">' + data[index].contributions + '</td>');
         $(table_cell).appendTo('#tr_' + index);
-        $('#tr_' + index).addClass('table__row_gold');
-      }
+        if (data[index].contributions <= 10) {
+          table_cell = ('<td id="td_group_' + index + '" class="table__cell">Bronze</td>');
+          $(table_cell).appendTo('#tr_' + index);
+          $('#tr_' + index).addClass('table__row_bronze');
+        } else if (data[index].contributions <= 100) {
+          table_cell = ('<td id="td_group_' + index + '" class="table__cell">Silver</td>');
+          $(table_cell).appendTo('#tr_' + index);
+          $('#tr_' + index).addClass('table__row_silver');
+        } else {
+          table_cell = ('<td id="td_group_' + index + '" class="table__cell">Gold</td>');
+          $(table_cell).appendTo('#tr_' + index);
+          $('#tr_' + index).addClass('table__row_gold');
+        }
 
-      urls.push(data[index].url);
-    });
-  }).then(getIndividualUsers)
-    .fail(function () {
-      console.log(jqxhr.responseText);
+        urls.push(data[index].url);
+      });
+    }).then(getIndividualUsers)
+    .catch(error => {
+      console.log(error);
     });
 }
 
