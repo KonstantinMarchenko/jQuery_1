@@ -1,14 +1,13 @@
 import '../styles/styles.css';
 
-let radioButtons = $('<input type="radio" id="radioButton_1" name="settings" value="1" checked="true"/>\n' +
-  '<label for="radioButton_1" name="settings" value="1"/><span></span>All</label>\n' +
-  '<p></p>\n' + '<input type="radio" id="radioButton_2" name="settings" value="2"//>\n' +
-  '<label for="radioButton_2"><span></span>Bronze</label>\n' +
-  '<p></p>\n' + '<input type="radio" id="radioButton_3" name="settings" value="3"//>\n' +
-  '<label for="radioButton_3"><span></span>Silver</label>\n' +
-  '<p></p>\n' + '<input type="radio" id="radioButton_4" name="settings" value="4"//>\n' +
-  '<label for="radioButton_4"><span></span>Gold</label>\n' +
-  '<p></p>');
+let radioButtons = $('<label class="container">All' +
+  '<input type="radio" checked="checked" name="settings" value="1"><span class="checkmark"></span></label>' +
+  '<label class="container">Gold' +
+  '<input type="radio" name="settings" value="2"><span class="checkmark"></span></label>' +
+  '<label class="container">Silver' +
+  '<input type="radio" name="settings" value="3"><span class="checkmark"></span></label>' +
+  '<label class="container">Bronze' +
+  '<input type="radio" name="settings" value="4"><span class="checkmark"></span></label>');
 
 radioButtons.appendTo('#radio');
 $('#radio').hide();
@@ -19,22 +18,21 @@ $('input[name="settings"]').on('change', function () {
     $(tableRowSelectors[1]).show();
     $(tableRowSelectors[2]).show();
   } else if ($(this).val() === '2') {
-    $(tableRowSelectors[0]).show();
+    $(tableRowSelectors[0]).hide();
     $(tableRowSelectors[1]).hide();
-    $(tableRowSelectors[2]).hide();
+    $(tableRowSelectors[2]).show();
   } else if ($(this).val() === '3') {
     $(tableRowSelectors[0]).hide();
     $(tableRowSelectors[1]).show();
     $(tableRowSelectors[2]).hide();
   } else if ($(this).val() === '4') {
-    $(tableRowSelectors[0]).hide();
+    $(tableRowSelectors[0]).show();
     $(tableRowSelectors[1]).hide();
-    $(tableRowSelectors[2]).show();
+    $(tableRowSelectors[2]).hide();
   }
 });
 
-$('#btn_1').click(function () {
-  $('#btn_1').hide();
+$(document).ready(function () {
   $('#radio').show();
   var p1 = new Promise((resolve, reject) => {
     resolve();
@@ -78,7 +76,7 @@ function getData() {
 }
 
 function getIndividualData() {
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 1; i++) {
     fetch(urls[i])
       .then(response => {
         return response.json();
@@ -87,7 +85,7 @@ function getIndividualData() {
       userData[i][5] = data.location;
       userData[i][6] = data.email;
       count++;
-      if (count === 30) fillTable();
+      if (count === 1) fillTable();
     }).catch(error => {
       console.log(error);
     });
@@ -210,10 +208,12 @@ function sortTable() {
       v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
   )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
 
-  document.querySelectorAll('.table__header').forEach(th => th.addEventListener('click', (() => {
-    const table = th.closest('.table');
-    Array.from(table.querySelectorAll('.table__row'))
-      .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
-      .forEach(tr => table.appendChild(tr));
-  })));
+  document.querySelectorAll('.table__header').forEach(function (th) {
+    th.addEventListener('click', function () {
+      const table = th.closest('.table');
+      Array.from(table.querySelectorAll('.table__row')).sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc)).forEach(function (tr) {
+        table.appendChild(tr);
+      })
+    })
+  });
 }
