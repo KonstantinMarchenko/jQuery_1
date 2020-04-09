@@ -76,7 +76,7 @@ function getData() {
 }
 
 function getIndividualData() {
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 30; i++) {
     fetch(urls[i])
       .then(response => {
         return response.json();
@@ -85,7 +85,7 @@ function getIndividualData() {
       userData[i][5] = data.location;
       userData[i][6] = data.email;
       count++;
-      if (count === 1) fillTable();
+      if (count === 30) fillTable();
     }).catch(error => {
       console.log(error);
     });
